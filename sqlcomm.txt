@@ -1,0 +1,37 @@
+	CREATE DATABASE form;
+GRANT ALL ON form.* TO 'frm'@'localhost' IDENTIFIED BY 'frm123';
+GRANT ALL ON form.* TO 'frm'@'127.0.0.1' IDENTIFIED BY 'frm123';
+
+
+CREATE TABLE candidate (
+   candidate_id INTEGER NOT NULL
+     AUTO_INCREMENT PRIMARY KEY,
+   candidate_name VARCHAR(128),
+   email VARCHAR(128),
+   gender CHAR(8),
+   contact_no cHAR(16),
+   city VARCHAR(128),
+   duration VARCHAR(128),
+   interests TEXT,
+   resume VARCHAR(128),
+   INDEX(email),
+   INDEX(candidate_name),
+) ENGINE=InnoDB CHARSET=utf8;
+
+
+CREATE TABLE skill (
+    skill_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    skill_tag VARCHAR(30),
+    candidate_id INTEGER,
+    index(skill_tag),
+    CONSTRAINT FOREIGN KEY(candidate_id)
+    REFERENCES candidate (candidate_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB CHARSET=utf8;
+
+INSERT INTO candidate(candidate_name,email,gender,contact_no,city,duration,interests,resume)values('Alex','alex@gmail.com','Male','4875222955','Mumbai','6_months','i'm in love with facebook','https://grfsd.com');
+INSERT INTO candidate(candidate_name,email,gender,contact_no,city,duration,interests,resume)values('Bob','bob@gmail.com','Male','4875252225','Delhi','3_months',"Google",'https://gdasdsd.com');
+INSERT INTO skill(skill_tag,candidate_id)values('PHP',1);
+INSERT INTO skill(skill_tag,candidate_id)values('SQL',1);
+INSERT INTO skill(skill_tag,candidate_id)values('HTML',2);
+INSERT INTO skill(skill_tag,candidate_id)values('CSS',2);
