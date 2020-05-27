@@ -8,7 +8,7 @@ if ( isset($_POST['candidate_name']) && isset($_POST['candidate_email']) && isse
 
 if ( strlen($_POST['candidate_name']) < 1 ||  strlen($_POST['candidate_email']) < 1 || strlen($_POST['location']) < 1 || strlen($_POST['contact']) < 1 || strlen($_POST['interest']) < 1) {
         $_SESSION['error'] = 'All fields are required';
-        header("Location: index.php");
+        header("Location: index.php?fsdf");
         return;
     }
 
@@ -16,11 +16,42 @@ if ( strlen($_POST['candidate_name']) < 1 ||  strlen($_POST['candidate_email']) 
     
  	  if ( ! is_numeric($_POST['contact']) ) {
        $_SESSION['error'] = 'Check contact no.';
-        header("Location: index.php");
+        header("Location: index.php?fdsfs");
         return;
-    }
+    }	
+
+  $file = $_FILES['file'];
+  $fileName = $_FILES['file']['name'];
+  $fileTmpName = $_FILES['file']['tmp_name'];
+  $fileSize = $_FILES['file']['size'];
+  $fileError = $_FILES['file']['error'];
+  $fileType = $_FILES['file']['type'];
+
+
+  $fileExt = explode('.',$fileName);
+  $fileActualExt = strtolower(end($fileExt));
+  $allowed = array('jpg','jpeg','png','PNG');
+  $x = $_POST['candidate_name'];
   
-    $stmt = $pdo->prepare('INSERT INTO candidate(candidate_name,email,gender,contact_no,city,duration,interests,resume)values(:na,:em,:gen,:con,:loc,:dur,:inter,"http://bhjhjh")');
+  
+
+  if(in_array($fileActualExt, $allowed)){
+    if($fileError === 0){
+
+      $newname = $x.".".$fileActualExt;
+      $filedest = 'uploads/'.$newname;
+      move_uploaded_file($fileTmpName, $filedest);
+      //header("Location:index.php?upload");
+      //return;
+ }
+}   
+    
+  
+  
+
+  
+		
+	 $stmt = $pdo->prepare('INSERT INTO candidate(candidate_name,email,gender,contact_no,city,duration,interests,resume)values(:na,:em,:gen,:con,:loc,:dur,:inter,:res)');
 
 $stmt->execute(array(
   ':na' => $_POST['candidate_name'],
@@ -29,15 +60,15 @@ $stmt->execute(array(
   ':con' => $_POST['contact'],
   ':loc' => $_POST['location'],
   ':dur' => $_POST['duration'],
-  ':inter' => $_POST['interest'])
-  //':res' => "http:ssf.com"
+  ':inter' => $_POST['interest'],
+  ':res' => $filedest)
 );
-	
-	$can_id = $pdo->lastInsertId();
-	$rank =1;
-	for($i=1; $i<=20; $i++) {
+  
+  $can_id = $pdo->lastInsertId();
+  $rank =1;
+  for($i=1; $i<=20; $i++) {
     if ( ! isset($_POST['skill'.$i]) ) continue;
-	$skills = $_POST['skill'.$i];
+  $skills = $_POST['skill'.$i];
     $stmt = $pdo->prepare('INSERT INTO skill (candidate_id, skill_tag) VALUES (:can , :skill_tag)');
 $stmt->execute(array(
   ':can' => $can_id,
@@ -48,7 +79,7 @@ $rank++;
 
   }
   $_SESSION['success'] = "Record Added";
-		header("Location: index.php");
+    header("Location: untit.php");
         return;
 
 if ( isset($_SESSION['error']) ) {
@@ -88,7 +119,7 @@ if ( isset($_SESSION['success']) ) {
 </section>
     <div class="container">
       
-<form method="post" action="index.php">
+<form method="post" action="index.php" enctype="multipart/form-data">
 <div class="field">
   <label class="label">Candidate Name</label>
   <div class="control has-icons-left has-icons-right">
@@ -117,11 +148,11 @@ if ( isset($_SESSION['success']) ) {
   <label class="label">Gender</label>
 <div class="control">
   <label class="radio">
-    <input type="radio" name="gender">
+    <input type="radio" name="gender" value="Male">
     Male
   </label>
   <label class="radio">
-    <input type="radio" name="gender">
+    <input type="radio" name="gender" value="Female">
     Female
   </label>
 </div>
@@ -169,23 +200,8 @@ if ( isset($_SESSION['success']) ) {
   </div>
 </div>
 <div class="field">
-  <label class="label">Upload Resume</label>
-<div class="file has-name">
-  <label class="file-label">
-    <input class="file-input" type="file" name="resume">
-    <span class="file-cta">
-      <span class="file-icon">
-        <i class="fas fa-upload"></i>
-      </span>
-      <span class="file-label">
-        Choose a file…
-      </span>
-    </span>
-    <span class="file-name">
-      Screen Shot 2017-07-29 at 15.54.25.png
-    </span>
-  </label>
-</div>
+	<label class="label">Resume</label>
+<input type="file" name="file">
 </div>
 <div class="field">
   <div class="control">
